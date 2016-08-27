@@ -21,6 +21,7 @@ public class DragonAIScript : MonoBehaviour {
     public float flyHeight = 25f;
 
     System.DateTime startStatusTime;
+    Vector3 defaultScaled;
     Vector3 flyCircleRadius = new Vector3(20,0,0);
     float flyCircleHeight;
     float flyCircleCurrentRotation = 0;
@@ -36,9 +37,15 @@ public class DragonAIScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
         startStatusTime = System.DateTime.Now;
+        defaultScaled = transform.localScale;
     }
 
     void Update () {
+        // Scale the size of dragon depends on distance between Dragon and player.
+        float distance = Vector3.Distance (playerTransform.position, transform.position);
+        float factor = 1f + 0.5f * distance / flyRadius;
+        transform.localScale = factor * defaultScaled;
+
         switch (dragonStatus) {
         case DragonStatus.SLEEP:
             {
