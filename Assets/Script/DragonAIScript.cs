@@ -34,6 +34,7 @@ public class DragonAIScript : MonoBehaviour {
     float rotateSpeedFactor = 1.0f;
     float targetRotation;
     bool animationStart;
+    int nearAttackCount;
     int hp = 3;
 
     //public DragonController controller;
@@ -156,8 +157,10 @@ public class DragonAIScript : MonoBehaviour {
                 {
                     // near
                     moveSpeedFactor = 1f;
-                    targetPosition = playerTransform.position;
-                    // TODO: fine tune land distance
+                    Vector3 diff = playerTransform.position - transform.position;
+                    diff.Normalize();
+                    targetPosition = playerTransform.position - diff * 55;
+                    targetPosition.y = 0;
                     targetPosition.y = -5;
                     Vector3 targetDirection = (playerTransform.position - transform.position).normalized;
                     Quaternion direction = Quaternion.identity;
@@ -223,33 +226,35 @@ public class DragonAIScript : MonoBehaviour {
                                 movePositionToTarget();
                                 if (transform.position.y < 0.2f)
                                 {
+                                    nearAttackCount = 0;
                                     dragonAnimator.SetBool("Fly", false);
-                                    dragonAnimator.SetBool("Attack2", true);
-                                    animationStart = false;
-                                    attackStatus = AttackStatus.ATTACKING;
+                                    attackStatus = AttackStatus.READY;
                                 }
                             }
                             break;
                         case AttackStatus.READY:
                             {
-                                // TODO: control attack time
-                                int attackWay = Random.Range(0, 4);
+                                if(nearAttackCount >= 3)
+                                {
+                                    if(Random.Range(0,2) == 0)
+                                    {
+                                        dragonAnimator.SetBool("Fly", true);
+                                        updateStartCirclePoint();
+                                        moveSpeedFactor = 0.5f;
+                                        dragonStatus = DragonStatus.FLY_UP;
+                                    }
+                                }
+                                int attackWay = Random.Range(0, 2);
                                 switch (attackWay)
                                 {
                                     case 0:
                                         dragonAnimator.SetBool("Attack1", true);
                                         break;
                                     case 1:
-                                    case 2:
                                         dragonAnimator.SetBool("Attack2", true);
                                         break;
-                                    case 3:
-                                        dragonAnimator.SetBool("Fly", true);
-                                        updateStartCirclePoint();
-                                        moveSpeedFactor = 0.5f;
-                                        dragonStatus = DragonStatus.FLY_UP;
-                                        return;
                                 }
+                                nearAttackCount++;
                                 animationStart = false;
                                 attackStatus = AttackStatus.ATTACKING;
                             }
@@ -300,7 +305,6 @@ public class DragonAIScript : MonoBehaviour {
                         break;
                     case AttackStatus.ATTACKING:
                         {
-                                // TODO: fine tune last turn distance
                             if (Vector3.Distance(transform.position,playerTransform.position) < 35 || Vector3.Distance(transform.position, playerTransform.position) > 100)
                             {
                                 startStatusTime = System.DateTime.Now;
@@ -332,7 +336,6 @@ public class DragonAIScript : MonoBehaviour {
                         case AttackStatus.FLY_DOWN:
                             {
                                 targetPosition = playerTransform.position;
-                                //TODO: fine tune min height
                                 targetPosition.y = 3;
                                 moveRotationToTarget();
                                 if(checkRotateFinish())

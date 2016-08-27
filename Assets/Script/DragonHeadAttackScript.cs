@@ -14,6 +14,7 @@ public class DragonHeadAttackScript : MonoBehaviour {
     void Start()
     {
         lastSwordPosition = sword.position;
+        lastHitShieldTime = System.DateTime.Now;
     }
 
     void Update()
@@ -24,7 +25,6 @@ public class DragonHeadAttackScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        print("OnTriggerEnter");
         if(collider.gameObject.tag == "Sword" && swordSpeed >10)
         {
             dragon.headHurt();
@@ -36,20 +36,19 @@ public class DragonHeadAttackScript : MonoBehaviour {
         }
         else if(collider.gameObject.tag == "Player")
         {
-            print("head hit player");
             if(dragon.dragonStatus == DragonAIScript.DragonStatus.ATTACK_TRAIN
                 && dragon.attackStatus == DragonAIScript.AttackStatus.ATTACKING)
             {
                 player.attackByTrain();
             }
-            else if(dragon.dragonStatus == DragonAIScript.DragonStatus.ATTACK_NEAR)
+            else if(dragon.dragonStatus == DragonAIScript.DragonStatus.ATTACK_NEAR
+                && dragon.attackStatus == DragonAIScript.AttackStatus.ATTACKING)
             {
                  if((System.DateTime.Now - lastHitShieldTime).TotalSeconds > 1)
                 {
                     player.attackByHand();
                 }
             }
-            //TODO: hit player
         }
     }
 }
