@@ -14,6 +14,8 @@ public class DragonAIScript : MonoBehaviour {
     public Animator dragonAnimator;
 
     public float moveSpeed = 10f;
+    /** The difference of angle when dragon round the player. unit is angle per frame */
+    public float roundAngleSpeed = 0.3f;
     public float rotateSpeed = 2.0f;
     public float flyRadius = 70f;
     public float flyHeight = 25f;
@@ -386,7 +388,7 @@ public class DragonAIScript : MonoBehaviour {
     }
 
     void moveCircle() {
-        flyCircleCurrentRotation--;
+        flyCircleCurrentRotation -= roundAngleSpeed;
         Quaternion rotation = new Quaternion();
         rotation.eulerAngles = new Vector3 (0, flyCircleCurrentRotation, 0);
         Vector3 positionXZ = rotation * flyCircleRadius;
