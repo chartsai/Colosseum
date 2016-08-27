@@ -195,6 +195,7 @@ public class DragonAIScript : MonoBehaviour {
             case DragonStatus.ATTACK_FIRE:
                 {
                     moveCircle();
+                    player.attackByFire();
                     if ((System.DateTime.Now - startStatusTime).TotalSeconds < 5)
                     {
                         break;
