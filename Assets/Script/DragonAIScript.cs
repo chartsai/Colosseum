@@ -116,7 +116,7 @@ public class DragonAIScript : MonoBehaviour {
                 }
                 if ((System.DateTime.Now - startStatusTime).TotalSeconds > 5) {
                     dragonAnimator.SetBool("Die", false);
-                    moveSpeed = 0.5f;
+                    moveSpeedFactor = 0.5f;
                     updateStartCirclePoint();
                     dragonAnimator.SetBool("Fly", true);
                     dragonStatus = DragonStatus.FLY_UP;
