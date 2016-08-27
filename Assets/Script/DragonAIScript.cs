@@ -3,8 +3,6 @@ using System.Collections;
 using Kalagaan;
 
 public class DragonAIScript : MonoBehaviour {
-    private const int TRAIN_OVERSHOT_SECOND = 1;
-
     public enum DragonStatus{SLEEP, TAUNT, FLY_UP, FLY_CIRCLE, ATTACK_NEAR, ATTACK_TRAIN, ATTACK_FIRE, ATTACK_FLY, DOWN};
     public enum AttackStatus{FLY_DOWN, READY, ATTACKING, ATTACK_FINISH};
     public DragonStatus dragonStatus = DragonStatus.SLEEP;
@@ -301,8 +299,10 @@ public class DragonAIScript : MonoBehaviour {
                         }
                         break;
                     case AttackStatus.ATTACK_FINISH:
-                        {                            
-                            if((System.DateTime.Now - startStatusTime).TotalSeconds > TRAIN_OVERSHOT_SECOND)
+                        {
+                            // fly up when the overshot distance is larger than the fly radius
+                            float distance = Vector3.Distance(transform.position, playerTransform.position);
+                            if (distance > flyRadius)
                             {
                                 dragonAnimator.SetBool("Run", false);
                                 dragonAnimator.SetBool("Fly", true);
