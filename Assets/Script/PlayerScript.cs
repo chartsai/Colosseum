@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
     public Material bloodMaterial;
+    public Transform headPosition;
     float bloodTransparent;
     void Start()
     {
@@ -26,6 +27,12 @@ public class PlayerScript : MonoBehaviour {
     public void attackByFly()
     {
         //check height
+        print("head position " + headPosition.position.y);
+        //1.3m * scale 8.2
+        if(headPosition.position.y < 1.3f * 8.2f)
+        {
+            return;
+        }
         showHurt();
     }
 

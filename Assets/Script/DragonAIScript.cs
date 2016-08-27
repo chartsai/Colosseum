@@ -335,6 +335,7 @@ public class DragonAIScript : MonoBehaviour {
                                     dragonAnimator.SetBool("Fly_plane", false);
                                     updateStartCirclePoint();
                                     dragonStatus = DragonStatus.FLY_UP;
+                                    player.attackByFly();
                                 }
                             }
                             break;
