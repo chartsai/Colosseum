@@ -5,8 +5,10 @@ using Kalagaan;
 public class DragonAIScript : MonoBehaviour {
     public enum DragonStatus{SLEEP, TAUNT, FLY_UP, FLY_CIRCLE, ATTACK_NEAR, ATTACK_TRAIN, ATTACK_FIRE, ATTACK_FLY, DOWN};
     public enum AttackStatus{FLY_DOWN, READY, ATTACKING, ATTACK_FINISH};
+    public enum RoundDirection{CLOCK_WISE, COUNTER_CLOCK_WISE};
     public DragonStatus dragonStatus = DragonStatus.SLEEP;
     public AttackStatus attackStatus = AttackStatus.FLY_DOWN;
+    public RoundDirection direction = RoundDirection.CLOCK_WISE;
     public PlayerScript player;
     public Transform[] flyCircleTransfrom;
     public DragonController dragonController;
@@ -377,9 +379,10 @@ public class DragonAIScript : MonoBehaviour {
 
     void updateStartCirclePoint() {
         // TODO: get far point and random radius and fly height
+        direction = Random.Range (0, 2) == 0 ? RoundDirection.CLOCK_WISE : RoundDirection.COUNTER_CLOCK_WISE;
         flyCircleCurrentRotation = (transform.rotation.eulerAngles.y +270) % 360;
         float positionDeg = (transform.rotation.eulerAngles.y + 90) % 360;
-        targetRotation = (transform.rotation.eulerAngles.y + 270) % 360;
+        targetRotation = transform.rotation.eulerAngles.y + (direction == RoundDirection.CLOCK_WISE ? 90 : -90);
         flyCircleHeight = flyHeight;
         flyCircleRadius = new Vector3(flyRadius, 0, 0);
 
@@ -391,12 +394,16 @@ public class DragonAIScript : MonoBehaviour {
     }
 
     void moveCircle() {
-        flyCircleCurrentRotation -= roundAngleSpeed;
+        flyCircleCurrentRotation += direction == RoundDirection.CLOCK_WISE ? roundAngleSpeed : -roundAngleSpeed;
         Quaternion rotation = new Quaternion();
         rotation.eulerAngles = new Vector3 (0, flyCircleCurrentRotation, 0);
         Vector3 positionXZ = rotation * flyCircleRadius;
         positionXZ.y = flyCircleHeight;
         transform.position = positionXZ;
+        if (direction == RoundDirection.CLOCK_WISE)
+        {
+            rotation.eulerAngles = new Vector3 (0, flyCircleCurrentRotation + 180, 0);
+        }
         transform.rotation = rotation;
     }
 
