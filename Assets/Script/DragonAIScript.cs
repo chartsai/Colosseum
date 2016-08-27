@@ -277,24 +277,26 @@ public class DragonAIScript : MonoBehaviour {
                 {
                     case AttackStatus.FLY_DOWN:
                         {
-                            movePositionToTarget();
-                            moveRotationToTarget();
-                            if (transform.position.y < 0.2f)
-                            {   
-                                dragonAnimator.SetBool("Fly", false);
-                                dragonAnimator.SetBool("Run", true);
-                                attackStatus = AttackStatus.ATTACKING;
+                            if(transform.position.y > 0)
+                            {
+                                movePositionToTarget();
+                            }
+                            if (!checkRotateFinish())
+                            {
+                                moveRotationToTarget();
+                            }
+                            else
+                            {
+                            dragonAnimator.SetBool("Fly", false);
+                            dragonAnimator.SetBool("Run", true);
+                            attackStatus = AttackStatus.ATTACKING;
                             }
                         }
                         break;
                     case AttackStatus.ATTACKING:
                         {
-                            Vector3 targetDirection = (playerTransform.position - transform.position).normalized;
-                            Quaternion direction = Quaternion.identity;
-                            targetRotation = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg + 90;
-                                transform.rotation = Quaternion.Euler( 0,targetRotation,0);
                                 // TODO: fine tune last turn distance
-                            if(Vector3.Distance(transform.position,playerTransform.position) < 10)
+                            if (Vector3.Distance(transform.position,playerTransform.position) < 35 || Vector3.Distance(transform.position, playerTransform.position) > 100)
                             {
                                 startStatusTime = System.DateTime.Now;
                                 attackStatus = AttackStatus.ATTACK_FINISH;
