@@ -3,91 +3,99 @@ using System.Collections;
 using Kalagaan;
 
 public class DragonAIScript : MonoBehaviour {
-	public enum DragonStatus{SLEEP,TAUNT,FLY_UP,FLY_CIRCLE,ATTACK_NEAR,ATTACK_TRAIN,ATTACK_FIRE,ATTACK_FLY,DOWN};
-	public enum AttackStatus{FLY_DOWN,READY,ATTACKING, ATTACK_FINISH };
-    public DragonStatus dragonStatus = DragonStatus.SLEEP;
-    public AttackStatus attackStatus = AttackStatus.FLY_DOWN;
-    public PlayerScript player;
-	public Transform[] flyCircleTransfrom;
-	public DragonController dragonController;
-	public Transform playerTransform;
-	public Animator dragonAnimator;
+    private const int TRAIN_OVERSHOT_SECOND = 1;
 
-    int hp = 3;
-	System.DateTime startStatusTime;
-	Vector3 flyCircleRadius = new Vector3(20,0,0);
+    public enum DragonStatus{SLEEP, TAUNT, FLY_UP, FLY_CIRCLE, ATTACK_NEAR, ATTACK_TRAIN, ATTACK_FIRE, ATTACK_FLY, DOWN};
+    public enum AttackStatus{FLY_DOWN, READY, ATTACKING, ATTACK_FINISH};
+    public Transform[] flyCircleTransfrom;
+    public DragonController dragonController;
+    public Transform playerTransform;
+    public Animator dragonAnimator;
+
+    public float moveSpeed = 10f;
+    public float rotateSpeed = 2.0f;
+    public float flyRadius = 70f;
+    public float flyHeight = 25f;
+
+    System.DateTime startStatusTime;
+    DragonStatus dragonStatus = DragonStatus.SLEEP;
+    AttackStatus attackStatus = AttackStatus.FLY_DOWN;
+    Vector3 flyCircleRadius = new Vector3(20,0,0);
     float flyCircleHeight;
     float flyCircleCurrentRotation = 0;
-	Vector3 velocity = Vector3.zero;
-	Vector3 targetPosition;
-	float targetRotation;
-	float moveSpeed = 0.1f;
-    float rotateSpeed = 2;
+    Vector3 velocity = Vector3.zero;
+    Vector3 targetPosition;
+    float moveSpeedFactor = 1.0f;
+    float rotateSpeedFactor = 1.0f;
+    float targetRotation;
     bool animationStart;
 
-	//public DragonController controller;
-	// Use this for initialization
-	void Start () {
-		startStatusTime = System.DateTime.Now;
-	}
+    //public DragonController controller;
+    // Use this for initialization
+    void Start () {
+        startStatusTime = System.DateTime.Now;
+    }
 
-	void Update () {
-		switch (dragonStatus) {
-		case DragonStatus.SLEEP:
-			{
-				//TODO: tune sleep time
-				if ((System.DateTime.Now - startStatusTime).TotalSeconds < 1) {
-					break;
-				}
-				dragonAnimator.SetBool ("Sleep", false);
-				if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Idle_1")) {
-					dragonAnimator.SetBool ("Taunt", true);
-					dragonStatus = DragonStatus.TAUNT;
-				}
-			}
-			break;
-		case DragonStatus.TAUNT:
-			{
-				if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Taunt1")) {
-					animationStart = true;
-					dragonAnimator.SetBool ("Taunt", false);
-				} else if (animationStart && dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Idle_1")) {
-					animationStart = false;
-                    moveSpeed = 0.5f;
+    void Update () {
+        switch (dragonStatus) {
+        case DragonStatus.SLEEP:
+            {
+                //TODO: tune sleep time
+                if ((System.DateTime.Now - startStatusTime).TotalSeconds < 1) {
+                    Debug.Log("Exepction: time is less than start status");
+                    break;
+                }
+                dragonAnimator.SetBool ("Sleep", false);
+                if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Idle_1")) {
+                    dragonAnimator.SetBool ("Taunt", true);
+                    dragonStatus = DragonStatus.TAUNT;
+                }
+            }
+            break;
+        case DragonStatus.TAUNT:
+            {
+                if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Taunt1")) {
+                    animationStart = true;
+                    dragonAnimator.SetBool ("Taunt", false);
+                } else if (animationStart && dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Idle_1")) {
+                    animationStart = false;
+                    moveSpeedFactor = 0.5f;
                     updateStartCirclePoint();
-					dragonAnimator.SetBool ("Fly", true);
-					dragonStatus = DragonStatus.FLY_UP;
-				}
-			}
-			break;
-		case DragonStatus.FLY_UP:
-			{
-				if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Fly_1")
+                    dragonAnimator.SetBool ("Fly", true);
+                    dragonStatus = DragonStatus.FLY_UP;
+                }
+            }
+            break;
+        case DragonStatus.FLY_UP:
+            {
+                if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Fly_1")
                         || dragonAnimator.GetCurrentAnimatorStateInfo(0).IsName("Fly_3")) {
-					movePositionToTarget ();
-				}
-                if (transform.position.y > targetPosition.y - 10) {
-                    moveRotationToTarget();
-                    if (checkRotateFinish() && transform.position.y > targetPosition.y - 1)
-                    {
-                    moveSpeed = 0.25f;
+                    movePositionToTarget ();
+                }
+                if (checkRotateFinish() && Mathf.Abs(transform.position.y - targetPosition.y) < 0.5f)
+                {
+                    moveSpeedFactor = 0.25f;
                     startStatusTime = System.DateTime.Now;
                     dragonStatus = DragonStatus.FLY_CIRCLE;
-                    }
-				}
-			}
-			break;
-		case DragonStatus.FLY_CIRCLE:
-			{
-				moveCircle ();
-				int circleSec = (int)(System.DateTime.Now - startStatusTime).TotalSeconds;
-				if (circleSec <= 5) {
-					return;
-				}
-				int startAttackRandom = Random.Range (0, circleSec - 5);
-				if (startAttackRandom == 0) {
-					return;
-				}
+                }
+                else if (Mathf.Abs(transform.position.y - targetPosition.y) < 5f)
+                {
+                    moveRotationToTarget();
+                }
+                
+            }
+            break;
+        case DragonStatus.FLY_CIRCLE:
+            {
+                moveCircle ();
+                int circleSec = (int)(System.DateTime.Now - startStatusTime).TotalSeconds;
+                if (circleSec <= 5) {
+                    return;
+                }
+                int startAttackRandom = Random.Range (0, circleSec - 5);
+                if (startAttackRandom == 0) {
+                    return;
+                }
                 startAttack();
             }
             break;
@@ -97,31 +105,14 @@ public class DragonAIScript : MonoBehaviour {
         case DragonStatus.ATTACK_TRAIN:
             {
                 handleAttack();
-		    }
-			break;
-        case DragonStatus.DOWN:
-            {
-                if(hp <= 0)
-                {
-                    return;
-                }
-                if((System.DateTime.Now - startStatusTime).TotalSeconds > 5)
-                {
-                    dragonAnimator.SetBool("Die", false);
-                    moveSpeed = 0.5f;
-                    updateStartCirclePoint();
-                    dragonAnimator.SetBool("Fly", true);
-                    dragonStatus = DragonStatus.FLY_UP;
-                }
             }
             break;
-		}
-	}
+        }
+    }
 
     void startAttack()
     {
         int nextAttackWay = Random.Range(0, 4);
-        nextAttackWay = 3;
         switch (nextAttackWay)
         {
             case 0:
@@ -136,7 +127,7 @@ public class DragonAIScript : MonoBehaviour {
             case 1:
                 {
                     // near
-                    moveSpeed = 1;
+                    moveSpeedFactor = 1f;
                     targetPosition = playerTransform.position;
                     // TODO: fine tune land distance
                     targetPosition.y = -5;
@@ -156,8 +147,8 @@ public class DragonAIScript : MonoBehaviour {
                     targetRotation = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg + 90;
                     dragonStatus = DragonStatus.ATTACK_FLY;
                     attackStatus = AttackStatus.FLY_DOWN;
-                    break;
                 }
+                break;
             case 3:
                 {
                     // train
@@ -168,8 +159,8 @@ public class DragonAIScript : MonoBehaviour {
                     targetRotation = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg + 90;
                     dragonStatus = DragonStatus.ATTACK_TRAIN;
                     attackStatus = AttackStatus.FLY_DOWN;
-                    break;
                 }
+                break;
         }
     }
 
@@ -214,7 +205,6 @@ public class DragonAIScript : MonoBehaviour {
                             {
                                 // TODO: control attack time
                                 int attackWay = Random.Range(0, 4);
-                                attackWay = 0;
                                 switch (attackWay)
                                 {
                                     case 0:
@@ -227,7 +217,7 @@ public class DragonAIScript : MonoBehaviour {
                                     case 3:
                                         dragonAnimator.SetBool("Fly", true);
                                         updateStartCirclePoint();
-                                        moveSpeed = 0.5f;
+                                        moveSpeedFactor = 0.5f;
                                         dragonStatus = DragonStatus.FLY_UP;
                                         return;
                                 }
@@ -289,19 +279,19 @@ public class DragonAIScript : MonoBehaviour {
                         break;
                     case AttackStatus.ATTACK_FINISH:
                         {                            
-                            if((System.DateTime.Now - startStatusTime).TotalSeconds > 2)
+                            if((System.DateTime.Now - startStatusTime).TotalSeconds > TRAIN_OVERSHOT_SECOND)
                             {
                                 dragonAnimator.SetBool("Run", false);
                                 dragonAnimator.SetBool("Fly", true);
                                 updateStartCirclePoint();
-                                moveSpeed = 0.5f;
+                                moveSpeedFactor = 0.5f;
                                 dragonStatus = DragonStatus.FLY_UP;
                             }
                         }
                         break;
                 }
-            }
                 break;
+            }
             case DragonStatus.ATTACK_FLY:
             {
                     switch (attackStatus)
@@ -314,7 +304,7 @@ public class DragonAIScript : MonoBehaviour {
                                 moveRotationToTarget();
                                 if(checkRotateFinish())
                                 {
-                                    moveSpeed = 2f;
+                                    moveSpeedFactor = 2f;
                                     dragonAnimator.SetBool("Fly_plane",true);
                                     attackStatus = AttackStatus.ATTACKING;
                                 }
@@ -325,7 +315,7 @@ public class DragonAIScript : MonoBehaviour {
                                 movePositionToTarget();
                                 if(transform.position.y < 6)
                                 {
-                                    moveSpeed = 1f;
+                                    moveSpeedFactor = 1f;
                                     dragonAnimator.SetBool("Fly_plane", false);
                                     updateStartCirclePoint();
                                     dragonStatus = DragonStatus.FLY_UP;
@@ -356,57 +346,50 @@ public class DragonAIScript : MonoBehaviour {
         return false;
     }
 
-	void updateStartCirclePoint(){
+    void updateStartCirclePoint() {
         // TODO: get far point and random radius and fly height
         flyCircleCurrentRotation = (transform.rotation.eulerAngles.y +270) % 360;
         float positionDeg = (transform.rotation.eulerAngles.y + 90) % 360;
         targetRotation = (transform.rotation.eulerAngles.y + 270) % 360;
-        flyCircleHeight = 30;
-        flyCircleRadius = new Vector3(50, 0, 0);
+        flyCircleHeight = flyHeight;
+        flyCircleRadius = new Vector3(flyRadius, 0, 0);
 
         Quaternion rotation = new Quaternion();
         rotation.eulerAngles = new Vector3(0, flyCircleCurrentRotation, 0);
         Vector3 positionXZ = rotation * flyCircleRadius;
         positionXZ.y = flyCircleHeight;
         targetPosition = positionXZ;
-	}
+    }
 
-	void moveCircle(){
+    void moveCircle() {
         flyCircleCurrentRotation--;
         Quaternion rotation = new Quaternion();
         rotation.eulerAngles = new Vector3 (0, flyCircleCurrentRotation, 0);
-		Vector3 positionXZ = rotation * flyCircleRadius;
-		positionXZ.y = flyCircleHeight;
-		transform.position = positionXZ;
-		transform.rotation = rotation;
-	}
+        Vector3 positionXZ = rotation * flyCircleRadius;
+        positionXZ.y = flyCircleHeight;
+        transform.position = positionXZ;
+        transform.rotation = rotation;
+    }
 
-	void movePositionToTarget(){
-		Vector3 move = targetPosition - transform.position;
-		move.Normalize ();
-		move = move * moveSpeed;
-		transform.position = transform.position + move;
-	}
+    void movePositionToTarget(){
+        Vector3 move = targetPosition - transform.position;
+        move.Normalize ();
+        Vector3 newPosition = transform.position + move * moveSpeed * moveSpeedFactor;
+        if ((targetPosition.x - transform.position.x > 0 && targetPosition.x - newPosition.x < 0)
+                || (targetPosition.x - transform.position.x < 0 && targetPosition.x - newPosition.x > 0)) {
+            // overshot, set to target directly.
+            transform.position = targetPosition;
+        } else {
+            transform.position = newPosition;
+        }
+    }
 
-	void moveRotationToTarget(){
+    void moveRotationToTarget(){
         while(targetRotation < 0)
         {
             targetRotation += 360;
         }
-		float str = Mathf.Min (rotateSpeed * Time.deltaTime, 1);
-		transform.rotation = Quaternion.Lerp (transform.rotation,Quaternion.Euler(0,targetRotation,0), str);
-	}
-
-    public void headHurt()
-    {   if(dragonStatus == DragonStatus.DOWN || dragonStatus == DragonStatus.FLY_UP)
-        {
-            return;
-        }
-        hp--;
-        startStatusTime = System.DateTime.Now;
-        dragonAnimator.SetBool("Die", true);
-        dragonAnimator.SetBool("Run", false);
-        dragonAnimator.SetBool("Fly", false);
-        dragonStatus = DragonStatus.DOWN;
+        float str = Mathf.Min (rotateSpeed * rotateSpeedFactor * Time.deltaTime, 1);
+        transform.rotation = Quaternion.Lerp (transform.rotation,Quaternion.Euler(0,targetRotation,0), str);
     }
 }
