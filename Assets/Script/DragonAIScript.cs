@@ -15,6 +15,7 @@ public class DragonAIScript : MonoBehaviour {
     public Transform playerTransform;
     public Animator dragonAnimator;
 
+    public ParticleSystem dustStorm;
     public float moveSpeed = 10f;
     /** The difference of angle when dragon round the player. unit is angle per frame */
     public float roundAngleSpeed = 0.3f;
@@ -47,6 +48,8 @@ public class DragonAIScript : MonoBehaviour {
         float distance = Vector3.Distance (playerTransform.position, transform.position);
         float factor = 1f + 0.5f * distance / flyRadius;
         transform.localScale = factor * defaultScaled;
+
+        dustStorm.enableEmission = transform.position.y <= 10 ? true : false;
 
         switch (dragonStatus) {
         case DragonStatus.SLEEP:
