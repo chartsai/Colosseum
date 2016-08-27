@@ -49,7 +49,7 @@ public class DragonAIScript : MonoBehaviour {
         float factor = 1f + 0.5f * distance / flyRadius;
         transform.localScale = factor * defaultScaled;
 
-        dustStorm.enableEmission = transform.position.y <= 10 ? true : false;
+        dustStorm.enableEmission = transform.position.y <= 50 ? true : false;
 
         switch (dragonStatus) {
         case DragonStatus.SLEEP:
