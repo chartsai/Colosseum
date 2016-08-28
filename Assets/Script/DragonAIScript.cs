@@ -236,12 +236,13 @@ public class DragonAIScript : MonoBehaviour {
                             {
                                 if(nearAttackCount >= 3)
                                 {
-                                    if(Random.Range(0,2) == 0)
+                                    if(nearAttackCount >= 5 || Random.Range(0,2) == 0)
                                     {
                                         dragonAnimator.SetBool("Fly", true);
                                         updateStartCirclePoint();
                                         moveSpeedFactor = 0.5f;
                                         dragonStatus = DragonStatus.FLY_UP;
+                                        return;
                                     }
                                 }
                                 int attackWay = Random.Range(0, 2);
@@ -307,7 +308,6 @@ public class DragonAIScript : MonoBehaviour {
                         {
                             if (Vector3.Distance(transform.position,playerTransform.position) < 35 || Vector3.Distance(transform.position, playerTransform.position) > 100)
                             {
-                                startStatusTime = System.DateTime.Now;
                                 attackStatus = AttackStatus.ATTACK_FINISH;
                             }
                         }
