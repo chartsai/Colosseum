@@ -23,7 +23,7 @@ public class RunVoice : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         run.Stop();
-        Destroy(run);
+        Destroy(run.gameObject);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here

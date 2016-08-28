@@ -23,7 +23,7 @@ public class SnoreVoice : StateMachineBehaviour {
 		if (snore.isPlaying) {
 			snore.Stop ();
 		}
-        Destroy(snore);
+        Destroy(snore.gameObject);
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
