@@ -10,7 +10,6 @@ public class DragonAIScript : MonoBehaviour {
     public AttackStatus attackStatus = AttackStatus.FLY_DOWN;
     public RoundDirection direction = RoundDirection.CLOCK_WISE;
     public PlayerScript player;
-    public Transform[] flyCircleTransfrom;
     public DragonController dragonController;
     public Transform playerTransform;
     public Animator dragonAnimator;
@@ -27,10 +26,9 @@ public class DragonAIScript : MonoBehaviour {
 
     System.DateTime startStatusTime;
     Vector3 defaultScaled;
-    Vector3 flyCircleRadius = new Vector3(20,0,0);
+    Vector3 flyCircleRadius;
     float flyCircleHeight;
     float flyCircleCurrentRotation = 0;
-    Vector3 velocity = Vector3.zero;
     Vector3 targetPosition;
     float moveSpeedFactor = 1.0f;
     float rotateSpeedFactor = 1.0f;
@@ -45,6 +43,7 @@ public class DragonAIScript : MonoBehaviour {
         startStatusTime = System.DateTime.Now;
         defaultScaled = transform.localScale;
         dragonAnimator.SetBool("Sleep", true);
+        flyCircleRadius = new Vector3(flyRadius, 0, 0);
     }
 
     void Update () {
@@ -304,15 +303,18 @@ public class DragonAIScript : MonoBehaviour {
                 {
                     case AttackStatus.FLY_DOWN:
                         {
+                            bool stillMoving = false;
                             if(transform.position.y > 0)
                             {
                                 movePositionToTarget();
+                                stillMoving = true;
                             }
                             if (!checkRotateFinish())
                             {
                                 moveRotationToTarget();
+                                stillMoving = true;
                             }
-                            else
+                            if (!stillMoving)
                             {
                                 animationStart = false;
                                 dragonAnimator.SetBool("Fly", false);
@@ -484,9 +486,42 @@ public class DragonAIScript : MonoBehaviour {
         dragonAnimator.SetBool("Run", false);
         dragonAnimator.SetBool("Fly", false);
         dragonStatus = DragonStatus.DOWN;
-        if (hp <= 0) {
+        if (hp <= 2)
+        {
+            firstBroken();
+        }
+        else if (hp <= 1)
+        {
+            secondBroken();
+        }
+        else if (hp <= 0) {
             dieVoice.Play();
             dragonStatus = DragonStatus.DIE;
         }
+    }
+
+    void firstBroken() {
+        GameObject obj = GameObject.Find("Armor_Head");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Forearm_L");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Forearm_R");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Thigh_L");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Thigh_R");
+        obj.SetActive(false);
+    }
+    void secondBroken() {
+        GameObject obj = GameObject.Find("Armor_Back");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Tail");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Torso");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Wing_L");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Wing_R");
+        obj.SetActive(false);
     }
 }
