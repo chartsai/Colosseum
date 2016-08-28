@@ -32,7 +32,7 @@ public class VibrateAndSoundScript : MonoBehaviour {
     }
     public void vibrateWithSound(int milliSecond)
     {
-        //effectAudio.Play();
+        effectAudio.Play();
         startVibrateTime = System.DateTime.Now;
         vibrateMilliSecond = milliSecond;
     }
