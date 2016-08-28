@@ -10,7 +10,6 @@ public class DragonAIScript : MonoBehaviour {
     public AttackStatus attackStatus = AttackStatus.FLY_DOWN;
     public RoundDirection direction = RoundDirection.CLOCK_WISE;
     public PlayerScript player;
-    public Transform[] flyCircleTransfrom;
     public DragonController dragonController;
     public Transform playerTransform;
     public Animator dragonAnimator;
@@ -25,10 +24,9 @@ public class DragonAIScript : MonoBehaviour {
 
     System.DateTime startStatusTime;
     Vector3 defaultScaled;
-    Vector3 flyCircleRadius = new Vector3(20,0,0);
+    Vector3 flyCircleRadius;
     float flyCircleHeight;
     float flyCircleCurrentRotation = 0;
-    Vector3 velocity = Vector3.zero;
     Vector3 targetPosition;
     float moveSpeedFactor = 1.0f;
     float rotateSpeedFactor = 1.0f;
@@ -43,6 +41,7 @@ public class DragonAIScript : MonoBehaviour {
         startStatusTime = System.DateTime.Now;
         defaultScaled = transform.localScale;
         dragonAnimator.SetBool("Sleep", true);
+        flyCircleRadius = new Vector3(flyRadius, 0, 0);
     }
 
     void Update () {
@@ -299,15 +298,18 @@ public class DragonAIScript : MonoBehaviour {
                 {
                     case AttackStatus.FLY_DOWN:
                         {
+                            bool stillMoving = false;
                             if(transform.position.y > 0)
                             {
                                 movePositionToTarget();
+                                stillMoving = true;
                             }
                             if (!checkRotateFinish())
                             {
                                 moveRotationToTarget();
+                                stillMoving = true;
                             }
-                            else
+                            if (!stillMoving)
                             {
                                 animationStart = false;
                                 dragonAnimator.SetBool("Fly", false);
