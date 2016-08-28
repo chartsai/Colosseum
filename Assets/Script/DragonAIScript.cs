@@ -38,6 +38,8 @@ public class DragonAIScript : MonoBehaviour {
     int nearAttackCount;
     int hp = 3;
 
+    float eyesClosePercent = 0.0f;
+
     //public DragonController controller;
     // Use this for initialization
     void Start () {
@@ -153,6 +155,12 @@ public class DragonAIScript : MonoBehaviour {
         case DragonStatus.DIE:
             {
                 // TODO play wining BGM and do some wining animation.
+                dragonController.m_closeEyes = eyesClosePercent;
+                dragonController.m_blinkRate = 0f;
+                if (eyesClosePercent < 1f)
+                {
+                    eyesClosePercent += 0.008f;
+                }
             }
             break;
         }
