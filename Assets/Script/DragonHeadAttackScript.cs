@@ -27,6 +27,7 @@ public class DragonHeadAttackScript : MonoBehaviour {
     {
         if(collider.gameObject.tag == "Sword" && swordSpeed >10)
         {
+            player.hitHead();
             dragon.headHurt();
         }
         else if(collider.gameObject.tag == "Shield")
@@ -47,6 +48,9 @@ public class DragonHeadAttackScript : MonoBehaviour {
                  if((System.DateTime.Now - lastHitShieldTime).TotalSeconds > 1)
                 {
                     player.attackByHand();
+                }else
+                {
+                    player.shieldVibrate();
                 }
             }
         }

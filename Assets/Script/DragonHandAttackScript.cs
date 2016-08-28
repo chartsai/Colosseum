@@ -17,7 +17,6 @@ public class DragonHandAttackScript : MonoBehaviour {
         if (collider.gameObject.tag == "Shield")
         {
             lastHitShieldTime = System.DateTime.Now;
-            //TODO:vibrate
         }
         else if (collider.gameObject.tag == "Player")
         {
@@ -27,6 +26,9 @@ public class DragonHandAttackScript : MonoBehaviour {
                 if ((System.DateTime.Now - lastHitShieldTime).TotalSeconds > 1)
                 {
                     player.attackByHand();
+                }else
+                {
+                    player.shieldVibrate();
                 }
             }
         }

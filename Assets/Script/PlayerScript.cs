@@ -7,6 +7,10 @@ public class PlayerScript : MonoBehaviour {
     public Transform headPosition;
     public Transform shieldPosition;
     public Transform dragonPosition;
+    public VibrateAndSoundScript sword;
+    public VibrateAndSoundScript shield;
+
+    bool colorIsRed = false;
 
     float bloodTransparent;
     System.DateTime lastFireTime;
@@ -21,7 +25,13 @@ public class PlayerScript : MonoBehaviour {
         if (bloodTransparent > 0)
         {
             bloodTransparent -=0.03f;
-            bloodMaterial.SetColor("_Color", new Color(1, 0, 0, bloodTransparent));
+            if (colorIsRed)
+            {
+                bloodMaterial.SetColor("_Color", new Color(1, 0, 0, bloodTransparent));
+            }else
+            {
+                bloodMaterial.SetColor("_Color", new Color(1, 1, 1, bloodTransparent));
+            }
         }
     }
     public void attackByFire()
@@ -44,6 +54,9 @@ public class PlayerScript : MonoBehaviour {
             {
                 lastFireTime = System.DateTime.Now;
                 // hp--
+            }else
+            {
+                shieldVibrate();
             }
             showHurt();
         }
@@ -57,11 +70,15 @@ public class PlayerScript : MonoBehaviour {
             return;
         }
         showHurt();
+        shieldVibrate();
+        swordVibrate();
     }
 
     public void attackByTrain()
     {
         showHurt();
+        shieldVibrate();
+        swordVibrate();
     }
 
     public void attackByHand()
@@ -76,6 +93,24 @@ public class PlayerScript : MonoBehaviour {
 
     void showHurt()
     {
+        colorIsRed = true;
         bloodTransparent = 0.5f;
+    }
+
+    public void hitHead()
+    {
+        colorIsRed = false;
+        bloodTransparent = 0.5f;
+        swordVibrate();
+    }
+
+    public void shieldVibrate()
+    {
+        shield.vibrate(500);
+    }
+
+    public void swordVibrate()
+    {
+        sword.vibrate(500);
     }
 }
