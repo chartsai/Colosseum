@@ -4,7 +4,7 @@ using Kalagaan;
 
 public class DragonAIScript : MonoBehaviour {
     public enum DragonStatus{SLEEP, TAUNT, FLY_UP, FLY_CIRCLE, ATTACK_NEAR, ATTACK_TRAIN, ATTACK_FIRE, ATTACK_FLY, DOWN};
-    public enum AttackStatus{FLY_DOWN, READY, ATTACKING, ATTACK_FINISH};
+    public enum AttackStatus{FLY_DOWN, READY, ATTACKING, TAUNT, ATTACK_FINISH };
     public enum RoundDirection{CLOCK_WISE, COUNTER_CLOCK_WISE};
     public DragonStatus dragonStatus = DragonStatus.SLEEP;
     public AttackStatus attackStatus = AttackStatus.FLY_DOWN;
@@ -42,6 +42,7 @@ public class DragonAIScript : MonoBehaviour {
     void Start () {
         startStatusTime = System.DateTime.Now;
         defaultScaled = transform.localScale;
+        dragonAnimator.SetBool("Sleep", true);
     }
 
     void Update () {
@@ -60,7 +61,9 @@ public class DragonAIScript : MonoBehaviour {
                     Debug.Log("Exepction: time is less than start status");
                     break;
                 }
-                dragonAnimator.SetBool ("Sleep", false);
+                if ((System.DateTime.Now - startStatusTime).TotalSeconds > 5) {
+                    dragonAnimator.SetBool("Sleep", false);
+                }
                 if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Idle_1")) {
                     dragonAnimator.SetBool ("Taunt", true);
                     dragonStatus = DragonStatus.TAUNT;
@@ -199,7 +202,6 @@ public class DragonAIScript : MonoBehaviour {
     {
         switch (dragonStatus)
         {
-
             case DragonStatus.ATTACK_FIRE:
                 {
                     moveCircle();
@@ -298,9 +300,25 @@ public class DragonAIScript : MonoBehaviour {
                             }
                             else
                             {
+                            animationStart = false;
                             dragonAnimator.SetBool("Fly", false);
-                            dragonAnimator.SetBool("Run", true);
-                            attackStatus = AttackStatus.ATTACKING;
+                            dragonAnimator.SetBool("Taunt", true);
+                            attackStatus = AttackStatus.TAUNT;
+                            }
+                        }
+                        break;
+                    case AttackStatus.TAUNT:
+                        {
+                            if (dragonAnimator.GetNextAnimatorStateInfo(0).IsName("Taunt1"))
+                            {
+                                animationStart = true;
+                                dragonAnimator.SetBool("Taunt", false);
+                            }
+                            else if (animationStart && dragonAnimator.GetNextAnimatorStateInfo(0).IsName("Idle_1"))
+                            {
+                                animationStart = false;
+                                dragonAnimator.SetBool("Run", true);
+                                attackStatus = AttackStatus.ATTACKING;
                             }
                         }
                         break;
