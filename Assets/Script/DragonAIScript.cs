@@ -513,6 +513,7 @@ public class DragonAIScript : MonoBehaviour {
         dragonAnimator.SetBool("Fly", false);
         dragonAnimator.SetBool("Attack1", false);
         dragonAnimator.SetBool("Attack2", false);
+        dragonController.m_headLook.weight = 0f;
         dragonStatus = DragonStatus.DOWN;
         if (hp == 2)
         {
