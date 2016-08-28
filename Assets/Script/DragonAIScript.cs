@@ -3,7 +3,7 @@ using System.Collections;
 using Kalagaan;
 
 public class DragonAIScript : MonoBehaviour {
-    public enum DragonStatus{SLEEP, TAUNT, FLY_UP, FLY_CIRCLE, ATTACK_NEAR, ATTACK_TRAIN, ATTACK_FIRE, ATTACK_FLY, DOWN};
+    public enum DragonStatus{SLEEP, TAUNT, FLY_UP, FLY_CIRCLE, ATTACK_NEAR, ATTACK_TRAIN, ATTACK_FIRE, ATTACK_FLY, DOWN, DIE};
     public enum AttackStatus{FLY_DOWN, READY, ATTACKING, TAUNT, ATTACK_FINISH };
     public enum RoundDirection{CLOCK_WISE, COUNTER_CLOCK_WISE};
     public DragonStatus dragonStatus = DragonStatus.SLEEP;
@@ -51,7 +51,12 @@ public class DragonAIScript : MonoBehaviour {
         float factor = 1f + 0.5f * distance / flyRadius;
         transform.localScale = factor * defaultScaled;
 
-        dustStorm.enableEmission = transform.position.y <= 50 ? true : false;
+        if (dragonStatus == DragonStatus.SLEEP || dragonStatus == DragonStatus.DIE) {
+            dustStorm.enableEmission = false;
+        } else {
+            // play dust storm effect when dragon is near to the ground.
+            dustStorm.enableEmission = transform.position.y <= 50 ? true : false;
+        }
 
         switch (dragonStatus) {
         case DragonStatus.SLEEP:
@@ -137,6 +142,11 @@ public class DragonAIScript : MonoBehaviour {
                     dragonAnimator.SetBool("Fly", true);
                     dragonStatus = DragonStatus.FLY_UP;
                 }
+            }
+            break;
+        case DragonStatus.DIE:
+            {
+                // TODO play wining BGM and do some wining animation.
             }
             break;
         }
@@ -464,5 +474,8 @@ public class DragonAIScript : MonoBehaviour {
         dragonAnimator.SetBool("Run", false);
         dragonAnimator.SetBool("Fly", false);
         dragonStatus = DragonStatus.DOWN;
+        if (hp <= 0) {
+            dragonStatus = DragonStatus.DIE;
+        }
     }
 }
