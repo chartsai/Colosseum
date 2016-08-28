@@ -23,6 +23,7 @@ public class DragonAIScript : MonoBehaviour {
     public float rotateSpeed = 2.0f;
     public float flyRadius = 70f;
     public float flyHeight = 25f;
+    public int nextAttack;
 
     System.DateTime startStatusTime;
     Vector3 defaultScaled;
@@ -156,6 +157,10 @@ public class DragonAIScript : MonoBehaviour {
     void startAttack()
     {
         int nextAttackWay = Random.Range(0, 4);
+        if(nextAttack>=0 && nextAttack < 4)
+        {
+            nextAttackWay = nextAttack;
+        }
         switch (nextAttackWay)
         {
             case 0:
@@ -256,6 +261,8 @@ public class DragonAIScript : MonoBehaviour {
                                         dragonAnimator.SetBool("Fly", true);
                                         updateStartCirclePoint();
                                         moveSpeedFactor = 0.5f;
+                                        dragonAnimator.SetBool("Attack1", false);
+                                        dragonAnimator.SetBool("Attack2", false);
                                         dragonStatus = DragonStatus.FLY_UP;
                                         return;
                                     }
@@ -476,7 +483,7 @@ public class DragonAIScript : MonoBehaviour {
     }
 
     public void headHurt() {
-        if (dragonStatus == DragonStatus.DOWN || dragonStatus == DragonStatus.FLY_UP)
+        if (dragonStatus == DragonStatus.DOWN || dragonStatus == DragonStatus.FLY_UP || dragonStatus == DragonStatus.SLEEP)
         {
             return;
         }
@@ -485,6 +492,8 @@ public class DragonAIScript : MonoBehaviour {
         dragonAnimator.SetBool("Die", true);
         dragonAnimator.SetBool("Run", false);
         dragonAnimator.SetBool("Fly", false);
+        dragonAnimator.SetBool("Attack1", false);
+        dragonAnimator.SetBool("Attack2", false);
         dragonStatus = DragonStatus.DOWN;
         if (hp == 2)
         {

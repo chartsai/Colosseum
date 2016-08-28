@@ -56,11 +56,12 @@ public class PlayerScript : MonoBehaviour {
             {
                 lastFireTime = System.DateTime.Now;
                 // hp--
-            }else
-            {
-                shieldVibrate();
             }
             showHurt();
+        }
+        else
+        {
+            shieldVibrate();
         }
     }
     
