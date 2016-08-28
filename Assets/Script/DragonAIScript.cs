@@ -156,7 +156,7 @@ public class DragonAIScript : MonoBehaviour {
     void startAttack()
     {
         int nextAttackWay = Random.Range(0, 4);
-        nextAttackWay = 3;
+        nextAttackWay = 2;
         switch (nextAttackWay)
         {
             case 0:
