@@ -15,6 +15,7 @@ public class DragonAIScript : MonoBehaviour {
     public Transform playerTransform;
     public Animator dragonAnimator;
     public AudioSource fireVoice;
+    public AudioSource dieVoice;
 
     public ParticleSystem dustStorm;
     public float moveSpeed = 10f;
@@ -156,7 +157,6 @@ public class DragonAIScript : MonoBehaviour {
     void startAttack()
     {
         int nextAttackWay = Random.Range(0, 4);
-        nextAttackWay = 2;
         switch (nextAttackWay)
         {
             case 0:
@@ -485,6 +485,7 @@ public class DragonAIScript : MonoBehaviour {
         dragonAnimator.SetBool("Fly", false);
         dragonStatus = DragonStatus.DOWN;
         if (hp <= 0) {
+            dieVoice.Play();
             dragonStatus = DragonStatus.DIE;
         }
     }
