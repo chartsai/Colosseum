@@ -73,6 +73,7 @@ public class DragonAIScript : MonoBehaviour {
                 }
                 if (dragonAnimator.GetCurrentAnimatorStateInfo (0).IsName ("Idle_1")) {
                     dragonAnimator.SetBool ("Taunt", true);
+                    dragonController.m_headLook.weight = 1f;
                     dragonStatus = DragonStatus.TAUNT;
                 }
             }
@@ -87,6 +88,7 @@ public class DragonAIScript : MonoBehaviour {
                     moveSpeedFactor = 0.5f;
                     updateStartCirclePoint();
                     dragonAnimator.SetBool ("Fly", true);
+                    dragonController.m_headLook.weight = 0.0f;
                     dragonStatus = DragonStatus.FLY_UP;
                 }
             }
@@ -101,6 +103,7 @@ public class DragonAIScript : MonoBehaviour {
                 {
                     moveSpeedFactor = 0.25f;
                     startStatusTime = System.DateTime.Now;
+                    dragonController.m_headLook.weight = 0.6f;
                     dragonStatus = DragonStatus.FLY_CIRCLE;
                 }
                 else if (Mathf.Abs(transform.position.y - targetPosition.y) < 1f)
@@ -142,6 +145,7 @@ public class DragonAIScript : MonoBehaviour {
                     moveSpeedFactor = 0.5f;
                     updateStartCirclePoint();
                     dragonAnimator.SetBool("Fly", true);
+                    dragonController.m_headLook.weight = 0f;
                     dragonStatus = DragonStatus.FLY_UP;
                 }
             }
@@ -184,6 +188,7 @@ public class DragonAIScript : MonoBehaviour {
                     Vector3 targetDirection = (playerTransform.position - transform.position).normalized;
                     Quaternion direction = Quaternion.identity;
                     targetRotation = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg + 90;
+                    dragonController.m_headLook.weight = 1f;
                     dragonStatus = DragonStatus.ATTACK_NEAR;
                     attackStatus = AttackStatus.FLY_DOWN;
                 }
@@ -207,6 +212,7 @@ public class DragonAIScript : MonoBehaviour {
                     Vector3 targetDirection = (playerTransform.position - transform.position).normalized;
                     Quaternion direction = Quaternion.identity;
                     targetRotation = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg + 90;
+                    dragonController.m_headLook.weight = 0.2f;
                     dragonStatus = DragonStatus.ATTACK_TRAIN;
                     attackStatus = AttackStatus.FLY_DOWN;
                 }
@@ -226,7 +232,7 @@ public class DragonAIScript : MonoBehaviour {
                     {
                         break;
                     }
-                    dragonController.m_headLook.weight = 0.2f;
+                    dragonController.m_headLook.weight = 0.6f;
                     dragonController.m_fireIntensity = 0;
                     dragonSound.stopFire();
                     dragonStatus = DragonStatus.FLY_CIRCLE;
@@ -247,6 +253,7 @@ public class DragonAIScript : MonoBehaviour {
                                 {
                                     nearAttackCount = 0;
                                     dragonAnimator.SetBool("Fly", false);
+                                    dragonController.m_headLook.weight = 0.6f;
                                     attackStatus = AttackStatus.READY;
                                 }
                             }
@@ -262,6 +269,7 @@ public class DragonAIScript : MonoBehaviour {
                                         moveSpeedFactor = 0.5f;
                                         dragonAnimator.SetBool("Attack1", false);
                                         dragonAnimator.SetBool("Attack2", false);
+                                        dragonController.m_headLook.weight = 0f;
                                         dragonStatus = DragonStatus.FLY_UP;
                                         return;
                                     }
@@ -325,6 +333,7 @@ public class DragonAIScript : MonoBehaviour {
                                 animationStart = false;
                                 dragonAnimator.SetBool("Fly", false);
                                 dragonAnimator.SetBool("Taunt", true);
+                                dragonController.m_headLook.weight = 1f;
                                 attackStatus = AttackStatus.TAUNT;
                             }
                         }
@@ -348,6 +357,7 @@ public class DragonAIScript : MonoBehaviour {
                         {
                             if (Vector3.Distance(transform.position,playerTransform.position) < 35 || Vector3.Distance(transform.position, playerTransform.position) > 100)
                             {
+                                dragonController.m_headLook.weight = 0f;
                                 attackStatus = AttackStatus.ATTACK_FINISH;
                             }
                         }
@@ -361,6 +371,7 @@ public class DragonAIScript : MonoBehaviour {
                                 dragonAnimator.SetBool("Run", false);
                                 dragonAnimator.SetBool("Fly", true);
                                 updateStartCirclePoint();
+                                dragonController.m_headLook.weight = 0f;
                                 moveSpeedFactor = 0.5f;
                                 dragonStatus = DragonStatus.FLY_UP;
                             }
@@ -394,6 +405,7 @@ public class DragonAIScript : MonoBehaviour {
                                     moveSpeedFactor = 1f;
                                     dragonAnimator.SetBool("Fly_plane", false);
                                     updateStartCirclePoint();
+                                    dragonController.m_headLook.weight = 0f;
                                     dragonStatus = DragonStatus.FLY_UP;
                                     player.attackByFly();
                                 }
