@@ -486,16 +486,17 @@ public class DragonAIScript : MonoBehaviour {
         dragonAnimator.SetBool("Run", false);
         dragonAnimator.SetBool("Fly", false);
         dragonStatus = DragonStatus.DOWN;
-        if (hp <= 2)
+        if (hp == 2)
         {
             firstBroken();
         }
-        else if (hp <= 1)
+        else if (hp == 1)
         {
             secondBroken();
         }
         else if (hp <= 0) {
             dieVoice.Play();
+            player.win();
             dragonStatus = DragonStatus.DIE;
         }
     }

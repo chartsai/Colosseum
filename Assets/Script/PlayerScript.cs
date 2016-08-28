@@ -9,6 +9,8 @@ public class PlayerScript : MonoBehaviour {
     public Transform dragonPosition;
     public VibrateAndSoundScript sword;
     public VibrateAndSoundScript shield;
+    public AudioSource winBgm;
+    public AudioSource gameBgm;
 
     bool colorIsRed = false;
 
@@ -117,5 +119,11 @@ public class PlayerScript : MonoBehaviour {
     public void swordVibrate()
     {
         sword.vibrate(500);
+    }
+
+    public void win()
+    {
+        gameBgm.Stop();
+        winBgm.Play();
     }
 }
