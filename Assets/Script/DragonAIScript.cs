@@ -17,6 +17,7 @@ public class DragonAIScript : MonoBehaviour {
     public AudioSource dieVoice;
 
     public ParticleSystem dustStorm;
+    public ParticleSystem armorBrokenEffect;
     public float moveSpeed = 10f;
     /** The difference of angle when dragon round the player. unit is angle per frame */
     public float roundAngleSpeed = 0.3f;
@@ -44,6 +45,7 @@ public class DragonAIScript : MonoBehaviour {
         defaultScaled = transform.localScale;
         dragonAnimator.SetBool("Sleep", true);
         flyCircleRadius = new Vector3(flyRadius, 0, 0);
+
     }
 
     void Update () {
@@ -501,28 +503,31 @@ public class DragonAIScript : MonoBehaviour {
         }
     }
 
-    void firstBroken() {
-        GameObject obj = GameObject.Find("Armor_Head");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Forearm_L");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Forearm_R");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Thigh_L");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Thigh_R");
-        obj.SetActive(false);
+    void firstBroken()
+    {
+        brokenArmor("Armor_Head");
+        brokenArmor("Armor_Forearm_L");
+        brokenArmor("Armor_Forearm_R");
+        brokenArmor("Armor_Thigh_L");
+        brokenArmor("Armor_Thigh_R");
     }
-    void secondBroken() {
-        GameObject obj = GameObject.Find("Armor_Back");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Tail");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Torso");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Wing_L");
-        obj.SetActive(false);
-        obj = GameObject.Find ("Armor_Wing_R");
+
+    void secondBroken()
+    {
+        brokenArmor("Armor_Back");
+        brokenArmor("Armor_Tail");
+        brokenArmor("Armor_Torso");
+        brokenArmor("Armor_Wing_L");
+        brokenArmor("Armor_Wing_R");
+    }
+
+    void brokenArmor(string armorName)
+    {
+        GameObject obj = GameObject.Find (armorName);
+        ParticleSystem ps = Instantiate (armorBrokenEffect);
+        ps.transform.position = obj.transform.position;
+        ps.Play ();
+        Debug.Log ("broken");
         obj.SetActive(false);
     }
 }
