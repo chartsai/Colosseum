@@ -481,8 +481,41 @@ public class DragonAIScript : MonoBehaviour {
         dragonAnimator.SetBool("Run", false);
         dragonAnimator.SetBool("Fly", false);
         dragonStatus = DragonStatus.DOWN;
-        if (hp <= 0) {
+        if (hp <= 2)
+        {
+            firstBroken();
+        }
+        else if (hp <= 1)
+        {
+            secondBroken();
+        }
+        else if (hp <= 0) {
             dragonStatus = DragonStatus.DIE;
         }
+    }
+
+    void firstBroken() {
+        GameObject obj = GameObject.Find("Armor_Head");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Forearm_L");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Forearm_R");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Thigh_L");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Thigh_R");
+        obj.SetActive(false);
+    }
+    void secondBroken() {
+        GameObject obj = GameObject.Find("Armor_Back");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Tail");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Torso");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Wing_L");
+        obj.SetActive(false);
+        obj = GameObject.Find ("Armor_Wing_R");
+        obj.SetActive(false);
     }
 }
