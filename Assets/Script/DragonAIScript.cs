@@ -9,12 +9,11 @@ public class DragonAIScript : MonoBehaviour {
     public DragonStatus dragonStatus = DragonStatus.SLEEP;
     public AttackStatus attackStatus = AttackStatus.FLY_DOWN;
     public RoundDirection direction = RoundDirection.CLOCK_WISE;
+    public DragonSoundScript dragonSound;
     public PlayerScript player;
     public DragonController dragonController;
     public Transform playerTransform;
     public Animator dragonAnimator;
-    public AudioSource fireVoice;
-    public AudioSource dieVoice;
 
     public ParticleSystem dustStorm;
     public ParticleSystem armorBrokenEffect;
@@ -170,8 +169,7 @@ public class DragonAIScript : MonoBehaviour {
                     startStatusTime = System.DateTime.Now;
                     dragonController.m_headLook.weight = 1;
                     dragonController.m_fireIntensity = 1;
-                    fireVoice.loop = true;
-                    fireVoice.Play();
+                    dragonSound.startFire();
                     dragonStatus = DragonStatus.ATTACK_FIRE;
                 }
                 break;
@@ -230,8 +228,8 @@ public class DragonAIScript : MonoBehaviour {
                     }
                     dragonController.m_headLook.weight = 0.2f;
                     dragonController.m_fireIntensity = 0;
+                    dragonSound.stopFire();
                     dragonStatus = DragonStatus.FLY_CIRCLE;
-                    fireVoice.Stop();
                 }
                 break;
             case DragonStatus.ATTACK_NEAR:
@@ -258,7 +256,7 @@ public class DragonAIScript : MonoBehaviour {
                                 if(nearAttackCount >= 3)
                                 {
                                     if(nearAttackCount >= 5 || Random.Range(0,2) == 0)
-                                    {
+                                    {                                        
                                         dragonAnimator.SetBool("Fly", true);
                                         updateStartCirclePoint();
                                         moveSpeedFactor = 0.5f;
@@ -505,7 +503,7 @@ public class DragonAIScript : MonoBehaviour {
             secondBroken();
         }
         else if (hp <= 0) {
-            dieVoice.Play();
+            dragonSound.playDie();
             player.win();
             dragonStatus = DragonStatus.DIE;
         }
