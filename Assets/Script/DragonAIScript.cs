@@ -14,6 +14,7 @@ public class DragonAIScript : MonoBehaviour {
     public DragonController dragonController;
     public Transform playerTransform;
     public Animator dragonAnimator;
+    public AudioSource fireVoice;
 
     public ParticleSystem dustStorm;
     public float moveSpeed = 10f;
@@ -155,6 +156,7 @@ public class DragonAIScript : MonoBehaviour {
     void startAttack()
     {
         int nextAttackWay = Random.Range(0, 4);
+        nextAttackWay = 0;
         switch (nextAttackWay)
         {
             case 0:
@@ -163,6 +165,8 @@ public class DragonAIScript : MonoBehaviour {
                     startStatusTime = System.DateTime.Now;
                     dragonController.m_headLook.weight = 1;
                     dragonController.m_fireIntensity = 1;
+                    fireVoice.loop = true;
+                    fireVoice.Play();
                     dragonStatus = DragonStatus.ATTACK_FIRE;
                 }
                 break;
@@ -222,6 +226,7 @@ public class DragonAIScript : MonoBehaviour {
                     dragonController.m_headLook.weight = 0.2f;
                     dragonController.m_fireIntensity = 0;
                     dragonStatus = DragonStatus.FLY_CIRCLE;
+                    fireVoice.Stop();
                 }
                 break;
             case DragonStatus.ATTACK_NEAR:

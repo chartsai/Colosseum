@@ -28,7 +28,7 @@ public class DragonHandAttackScript : MonoBehaviour {
                     player.attackByHand();
                 }else
                 {
-                    player.shieldVibrate();
+                    player.shieldVibrateWithSound();
                 }
             }
         }

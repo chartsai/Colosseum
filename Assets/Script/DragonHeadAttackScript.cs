@@ -50,7 +50,7 @@ public class DragonHeadAttackScript : MonoBehaviour {
                     player.attackByHand();
                 }else
                 {
-                    player.shieldVibrate();
+                    player.shieldVibrateWithSound();
                 }
             }
         }

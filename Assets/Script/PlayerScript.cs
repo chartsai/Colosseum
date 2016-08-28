@@ -103,10 +103,15 @@ public class PlayerScript : MonoBehaviour {
         bloodTransparent = 0.5f;
         swordVibrate();
     }
-
+    
     public void shieldVibrate()
     {
         shield.vibrate(500);
+    }
+
+    public void shieldVibrateWithSound()
+    {
+        shield.vibrateWithSound(500);
     }
 
     public void swordVibrate()
