@@ -174,7 +174,6 @@ public class DragonAIScript : MonoBehaviour {
                     diff.Normalize();
                     targetPosition = playerTransform.position - diff * 55;
                     targetPosition.y = 0;
-                    targetPosition.y = -5;
                     Vector3 targetDirection = (playerTransform.position - transform.position).normalized;
                     Quaternion direction = Quaternion.identity;
                     targetRotation = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg + 90;
@@ -310,10 +309,10 @@ public class DragonAIScript : MonoBehaviour {
                             }
                             else
                             {
-                            animationStart = false;
-                            dragonAnimator.SetBool("Fly", false);
-                            dragonAnimator.SetBool("Taunt", true);
-                            attackStatus = AttackStatus.TAUNT;
+                                animationStart = false;
+                                dragonAnimator.SetBool("Fly", false);
+                                dragonAnimator.SetBool("Taunt", true);
+                                attackStatus = AttackStatus.TAUNT;
                             }
                         }
                         break;
@@ -400,10 +399,12 @@ public class DragonAIScript : MonoBehaviour {
         {
             d1 += 360;
         }
+        d1 = d1 % 360;
         while(d2 < 0)
         {
             d2 += 360;
         }
+        d2 = d2 % 360;
         if (Mathf.Abs(d1-d2) < 10)
         {
             return true;
@@ -445,11 +446,15 @@ public class DragonAIScript : MonoBehaviour {
         Vector3 move = targetPosition - transform.position;
         move.Normalize ();
         Vector3 newPosition = transform.position + move * moveSpeed * moveSpeedFactor;
-        if ((targetPosition.x - transform.position.x > 0 && targetPosition.x - newPosition.x < 0)
-                || (targetPosition.x - transform.position.x < 0 && targetPosition.x - newPosition.x > 0)) {
+        if ((targetPosition.x - transform.position.x) * (targetPosition.x - newPosition.x) <= 0
+                && (targetPosition.y - transform.position.y) * (targetPosition.y - newPosition.y) <= 0
+                && (targetPosition.z - transform.position.z) * (targetPosition.z - newPosition.z) <= 0)
+        {
             // overshot, set to target directly.
             transform.position = targetPosition;
-        } else {
+        }
+        else
+        {
             transform.position = newPosition;
         }
     }
