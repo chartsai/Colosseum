@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FlyVoice : StateMachineBehaviour {
+public class RunVoice : StateMachineBehaviour
+{
 
-    public AudioSource flyPrefab;
-    AudioSource fly;
+    public AudioSource runPrefab;
+    AudioSource run;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
 
-        fly = Instantiate(flyPrefab);
-        fly.Play();
+        run = Instantiate(runPrefab);
+        run.Play();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -20,8 +22,8 @@ public class FlyVoice : StateMachineBehaviour {
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        fly.Stop();
-        Destroy(fly);
+        run.Stop();
+        Destroy(run);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here

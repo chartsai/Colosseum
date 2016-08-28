@@ -2,10 +2,11 @@
 using System.Collections;
 
 public class SnoreVoice : StateMachineBehaviour {
-	public AudioSource snore;
+	public AudioSource snorePrefab;
+    AudioSource snore;
 	 // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-		snore = Instantiate (snore);
+		snore = Instantiate (snorePrefab);
 		//if (snore.isPlaying) {
 		//	snore.Stop ();
 			snore.Play ();
@@ -22,6 +23,7 @@ public class SnoreVoice : StateMachineBehaviour {
 		if (snore.isPlaying) {
 			snore.Stop ();
 		}
+        Destroy(snore);
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
