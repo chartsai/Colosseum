@@ -33,7 +33,6 @@ public class DragonHeadAttackScript : MonoBehaviour {
         else if(collider.gameObject.tag == "Shield")
         {
             lastHitShieldTime = System.DateTime.Now;
-            print("Shield trigger head");
         }
         else if(collider.gameObject.tag == "Player")
         {
@@ -47,11 +46,9 @@ public class DragonHeadAttackScript : MonoBehaviour {
             {
                  if((System.DateTime.Now - lastHitShieldTime).TotalSeconds > 1)
                 {
-                    print("guard hand faild " + (System.DateTime.Now - lastHitShieldTime).TotalSeconds);
                     player.attackByHand();
                 }else
                 {
-                    print("guard head");
                     player.shieldVibrateWithSound();
                 }
             }
