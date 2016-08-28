@@ -46,7 +46,6 @@ public class DragonAIScript : MonoBehaviour {
         defaultScaled = transform.localScale;
         dragonAnimator.SetBool("Sleep", true);
         flyCircleRadius = new Vector3(flyRadius, 0, 0);
-
     }
 
     void Update () {
