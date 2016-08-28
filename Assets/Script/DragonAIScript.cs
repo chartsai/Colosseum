@@ -96,7 +96,7 @@ public class DragonAIScript : MonoBehaviour {
                     startStatusTime = System.DateTime.Now;
                     dragonStatus = DragonStatus.FLY_CIRCLE;
                 }
-                else if (Mathf.Abs(transform.position.y - targetPosition.y) < 5f)
+                else if (Mathf.Abs(transform.position.y - targetPosition.y) < 1f)
                 {
                     moveRotationToTarget();
                 }
