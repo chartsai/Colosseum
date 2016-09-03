@@ -13,9 +13,9 @@ public class PlayerScript : MonoBehaviour {
     public AudioSource gameBgm;
 
     bool colorIsRed = false;
-
     float bloodTransparent;
     System.DateTime lastFireTime;
+
     void Start()
     {
         bloodTransparent = 0;
