@@ -166,6 +166,7 @@ public class PlayerScript : MonoBehaviour {
         {
             messageMesh.text = "YOU DIED\n\nPress two trigger\nto restart";
             bloodMaterial.SetColor("_Color", new Color(1, 0, 0, 0.2f));
+            bloodMaterial.SetColor("_EmissionColor", new Color(1, 0, 0));
         }
     }
 
