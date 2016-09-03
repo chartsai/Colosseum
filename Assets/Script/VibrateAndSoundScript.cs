@@ -30,10 +30,17 @@ public class VibrateAndSoundScript : MonoBehaviour {
         startVibrateTime = System.DateTime.Now;
         vibrateMilliSecond = milliSecond;
     }
+
     public void vibrateWithSound(int milliSecond)
     {
         effectAudio.Play();
         startVibrateTime = System.DateTime.Now;
         vibrateMilliSecond = milliSecond;
+    }
+
+    public bool isTriggerPress()
+    {
+        device = SteamVR_Controller.Input((int)controller.index);
+        return device.GetPress(SteamVR_Controller.ButtonMask.Trigger);
     }
 }

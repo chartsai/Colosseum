@@ -399,7 +399,7 @@ public class DragonAIScript : MonoBehaviour {
                                 moveRotationToTarget();
                                 if(checkRotateFinish())
                                 {
-                                    moveSpeedFactor = 2f;
+                                    moveSpeedFactor = 2.2f;
                                     dragonAnimator.SetBool("Fly_plane",true);
                                     attackStatus = AttackStatus.ATTACKING;
                                 }

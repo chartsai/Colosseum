@@ -25,7 +25,7 @@ public class DragonHeadAttackScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        if(collider.gameObject.tag == "Sword" && swordSpeed >10)
+        if(collider.gameObject.tag == "Sword" && swordSpeed >10 && player.isPlayerAlive())
         {
             player.hitHead();
             dragon.headHurt();

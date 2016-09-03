@@ -3,42 +3,56 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
 
+    public TextMesh messageMesh;
     public Material bloodMaterial;
-    public Transform headPosition;
     public Transform shieldPosition;
     public Transform dragonPosition;
     public VibrateAndSoundScript sword;
     public VibrateAndSoundScript shield;
+    public HeadScript head;
     public AudioSource winBgm;
     public AudioSource gameBgm;
 
     bool colorIsRed = false;
     float bloodTransparent;
     System.DateTime lastFireTime;
+    int playerHp = 5;
 
     void Start()
     {
         bloodTransparent = 0;
-        bloodMaterial.SetColor("_Color", new Color(1, 0, 0, bloodTransparent));
+        bloodMaterial.SetColor("_Color", new Color(1, 1, 1,bloodTransparent));
         lastFireTime = System.DateTime.Now;
     }
+    
     void Update()
     {
+        if (!isPlayerAlive())
+        {
+            if(sword.isTriggerPress() && shield.isTriggerPress())
+            {
+                Application.LoadLevel("Main Scene");
+            }
+            return;
+        }
         if (bloodTransparent > 0)
         {
             bloodTransparent -=0.03f;
             if (colorIsRed)
             {
                 bloodMaterial.SetColor("_Color", new Color(1, 0, 0, bloodTransparent));
-            }else
+                bloodMaterial.SetColor("_EmissionColor", new Color(1, 0, 0));
+            }
+            else
             {
                 bloodMaterial.SetColor("_Color", new Color(1, 1, 1, bloodTransparent));
+                bloodMaterial.SetColor("_EmissionColor", new Color(1, 1, 1));
             }
         }
     }
     public void attackByFire()
     {
-        Vector3 targetDirection = ( headPosition.position - dragonPosition.position ).normalized;
+        Vector3 targetDirection = ( head.transform.position - dragonPosition.position ).normalized;
         Quaternion direction = Quaternion.identity;
         float dragonDirection = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg - 90;
         while (dragonDirection < 0)
@@ -52,10 +66,10 @@ public class PlayerScript : MonoBehaviour {
         }
         if (Mathf.Abs(shieldDirection - dragonDirection) > 120)
         {
-            if ((System.DateTime.Now - lastFireTime).TotalSeconds < 5)
+            if ((System.DateTime.Now - lastFireTime).TotalSeconds > 3)
             {
                 lastFireTime = System.DateTime.Now;
-                // hp--
+                playerHurt();
             }
             showHurt();
         }
@@ -67,11 +81,11 @@ public class PlayerScript : MonoBehaviour {
     
     public void attackByFly()
     {
-        //1.3m * scale 8.2
-        if(headPosition.position.y < 1.3f * 8.2f)
+        if(head.isHeadDown())
         {
             return;
         }
+        playerHurt();
         showHurt();
         shieldVibrate();
         swordVibrate();
@@ -79,6 +93,7 @@ public class PlayerScript : MonoBehaviour {
 
     public void attackByTrain()
     {
+        playerHurt();
         showHurt();
         shieldVibrate();
         swordVibrate();
@@ -86,16 +101,22 @@ public class PlayerScript : MonoBehaviour {
 
     public void attackByHand()
     {
+        playerHurt();
         showHurt();
     }
 
     public void attackByHead()
     {
+        playerHurt();
         showHurt();
     }
 
     void showHurt()
     {
+        if(playerHp <= 0)
+        {
+            return;
+        }
         colorIsRed = true;
         bloodTransparent = 0.5f;
     }
@@ -131,5 +152,24 @@ public class PlayerScript : MonoBehaviour {
     {
         gameBgm.Stop();
         winBgm.Play();
+    }
+
+    public void playerHurt()
+    {
+        if (!isPlayerAlive())
+        {
+            return;
+        }
+        playerHp--;
+        if(playerHp == 0)
+        {
+            messageMesh.text = "YOU DIED\n\nPress two trigger\nto restart";
+            bloodMaterial.SetColor("_Color", new Color(1, 0, 0, 0.2f));
+        }
+    }
+
+    public bool isPlayerAlive()
+    {
+        return playerHp > 0;
     }
 }
