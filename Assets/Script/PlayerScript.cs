@@ -7,6 +7,7 @@ public class PlayerScript : MonoBehaviour {
     public Material bloodMaterial;
     public Transform shieldPosition;
     public Transform dragonPosition;
+    public Transform dragonHeadPosition;
     public VibrateAndSoundScript sword;
     public VibrateAndSoundScript shield;
     public HeadScript head;
@@ -52,7 +53,7 @@ public class PlayerScript : MonoBehaviour {
     }
     public void attackByFire()
     {
-        Vector3 targetDirection = ( head.transform.position - dragonPosition.position ).normalized;
+        Vector3 targetDirection = (head.transform.position - dragonHeadPosition.position ).normalized;
         Quaternion direction = Quaternion.identity;
         float dragonDirection = -Mathf.Atan2(targetDirection.z, targetDirection.x) * Mathf.Rad2Deg - 90;
         while (dragonDirection < 0)
@@ -64,7 +65,7 @@ public class PlayerScript : MonoBehaviour {
         {
             shieldDirection += 360;
         }
-        if (Mathf.Abs(shieldDirection - dragonDirection) > 120)
+        if (Mathf.Abs(shieldDirection - dragonDirection) > 90)
         {
             if ((System.DateTime.Now - lastFireTime).TotalSeconds > 3)
             {
